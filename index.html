@@ -111,6 +111,8 @@
   details.chart { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 14px; }
   details.chart summary { cursor: pointer; color: var(--blue); text-decoration: underline; font-size: 20px; padding: 6px 0; }
   details.chart summary:focus-visible { outline: 4px solid #f2b705; outline-offset: 2px; }
+  .intro { font-size: 16px; background: #eef3fb; border-radius: 8px; padding: 10px 12px; margin: 0 0 12px; }
+  .where { font-size: 16px; }
   .fine { font-size: 13px; color: #555; margin: 12px 0 0; }
   .error { color: #b00020; font-weight: bold; }
 </style>
@@ -132,7 +134,9 @@
 /* ===== Settings: update these when info changes ===== */
 const CLINIC = {
   name: "Clinton County WIC",
-  address: "111 S. Nelson Ave., Wilmington, OH 45177",
+  address: "111 S. Nelson Ave., Suite 1 (Entrance C), Wilmington, OH 45177",
+  hours: "Mon\u2013Thu 7:30 a.m.\u20133:30 p.m. &middot; Fri 7:30\u201311:30 a.m. and 12:30\u20133:30 p.m.",
+  email: "WIC01400@odh.ohio.gov",
   phone: "937-382-2862",
   phoneLink: "tel:+19373822862"
 };
@@ -212,7 +216,8 @@ function callBlock(c = CLINIC) {
 /* ===== Screens ===== */
 const SCREENS = {
   county() {
-    html(`<p class="step">Question 1 of 6</p>
+    html(`<p class="intro">WIC gives free healthy foods, nutrition help, and breastfeeding support to moms, babies, and kids under 5. Many working families qualify. <strong>Getting WIC does not affect immigration status or other benefits.</strong></p>
+      <p class="step">Question 1 of 6</p>
       <h2>Do you live in Clinton County?</h2>
       <p class="hint">This includes Wilmington, Blanchester, Sabina, New Vienna, Clarksville, Martinsville, Midland, and Port William.</p>`);
     btnRow(btn("Yes", () => go("who")), btn("No", () => go("otherCounty")));
@@ -273,12 +278,8 @@ const SCREENS = {
 
   benefits() {
     html(`<p class="step">Question 3 of 6</p>
-      <h2>Do you or your family get any of these?</h2>
-      <ul>
-        <li>Medicaid</li>
-        <li>SNAP (food stamps)</li>
-        <li>Ohio Works First (OWF) cash help</li>
-      </ul>`);
+      <h2>Do you or your family get Medicaid or SNAP (food stamps)?</h2>
+      <p class="hint">If yes, you already meet the WIC income rules.</p>`);
     btnRow(
       btn("Yes", () => { state.benefits = true; go("size"); }),
       btn("No", () => { state.benefits = false; go("size"); }),
@@ -373,11 +374,11 @@ const SCREENS = {
   resultYes() {
     app.classList.add("result-yes");
     html(`<h2>Good news! You may be able to get WIC.</h2>
-      <p>Call to set up a visit. Staff will do a short health check there.</p>
+      <p>Call to set up a visit.</p>
       ${callBlock()}
-      <p><strong>Where:</strong> ${CLINIC.address}</p>
+      <p class="where"><strong>Where:</strong> ${CLINIC.address}<br><strong>Hours:</strong> ${CLINIC.hours}</p>
       ${bringList()}
-      <p class="fine">This is a quick check, not a sign-up. WIC staff decide at your visit. Income limits: Ohio Dept. of Health, revised 7/26. WIC is an equal opportunity provider.</p>`);
+      <p class="fine">Quick check only, not a sign-up. WIC staff decide at your visit, after a short health check. Income limits: Ohio Dept. of Health, rev. 7/26. WIC is an equal opportunity provider.</p>`);
   },
 
   resultUnsure() {
@@ -385,9 +386,9 @@ const SCREENS = {
     html(`<h2>That's OK. We can help you figure it out.</h2>
       <p>Many families who are not sure do qualify. Call us and we will go over it with you.</p>
       ${callBlock()}
-      <p><strong>Where:</strong> ${CLINIC.address}</p>
+      <p class="where"><strong>Where:</strong> ${CLINIC.address}<br><strong>Hours:</strong> ${CLINIC.hours}</p>
       ${bringList()}
-      <p class="fine">This is a quick check, not a sign-up. WIC staff decide at your visit. Income limits: Ohio Dept. of Health, revised 7/26. WIC is an equal opportunity provider.</p>`);
+      <p class="fine">Quick check only, not a sign-up. WIC staff decide at your visit, after a short health check. Income limits: Ohio Dept. of Health, rev. 7/26. WIC is an equal opportunity provider.</p>`);
   },
 
   resultOver() {
@@ -395,21 +396,21 @@ const SCREENS = {
     html(`<h2>Your income may be too high for WIC.</h2>
       <p>But please still call us. Some things can change the answer, like:</p>
       <ul>
-        <li>Getting Medicaid, SNAP, or OWF</li>
+        <li>Getting Medicaid or SNAP</li>
         <li>Income that changed lately, like a lost job</li>
         <li>A household count that is different than you thought</li>
       </ul>
       ${callBlock()}
-      <p class="fine">This is a quick check, not a sign-up. WIC staff decide at your visit. Income limits: Ohio Dept. of Health, revised 7/26. WIC is an equal opportunity provider.</p>`);
+      <p class="fine">Quick check only, not a sign-up. WIC staff decide at your visit, after a short health check. Income limits: Ohio Dept. of Health, rev. 7/26. WIC is an equal opportunity provider.</p>`);
   }
 };
 
 function bringList() {
   return `<p style="margin-bottom:4px"><strong>Bring to your visit:</strong></p>
     <ul>
-      <li>Each person who wants WIC, and a photo ID</li>
-      <li>A bill or lease that shows your address</li>
-      <li>Proof of income, like pay stubs${state.benefits ? ", or your Medicaid, SNAP, or OWF paper" : ""}</li>
+      <li>Everyone applying, and a photo ID</li>
+      <li>A bill or lease with your address</li>
+      <li>${state.benefits ? "Your Medicaid or SNAP card" : "Proof of income, like pay stubs"}</li>
     </ul>`;
 }
 
